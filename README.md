@@ -1,41 +1,41 @@
-# 道途 (Dao Path) - 文字修仙游戏
+#途途(Dao路径)-文字修仙游戏
 
-## 游戏简介
+##游戏简介
 
 这是一款多人在线文字修仙游戏，玩家可以创建角色、修炼境界、探索世界、与其他玩家交流和切磋。
 
-## 功能特点
+##功能特点
 
-- 用户注册和登录系统
-- 角色创建（选择灵根、性别、名字）
-- 修炼系统（打坐提升境界）
-- 探索系统（打怪、寻宝）
-- 多人在线聊天
-- 玩家切磋PK
-- 排行榜
+-用户注册和登录系统
+-角色创建（选择灵根、性别、名字）
+-修炼系统（打坐提升境界）
+-探索系统（打怪、寻宝）
+-多人在线聊天
+-玩家切磋PK
+-排行榜
 
-## 技术栈
+##技术栈
 
-- **后端**：Node.js + Express
-- **数据库**：MongoDB (云端)
+- **后端**：Node.js+Express
+- **数据库**：MongoDB(云端)
 - **实时通信**：Socket.io
-- **前端**：HTML + CSS + JavaScript
+- **前端**：HTML+CSS+JavaScript
 
-## 部署指南
+##部署指南
 
-### 前置要求
+###前置要求
 
-1. GitHub 账户
-2. MongoDB Atlas 账户（免费）
-3. Railway 账户（免费）
+1.GitHub账户
+2.MongoDB地图集账户（免费）
+3.铁路账户（免费）
 
-### 步骤 1：创建 MongoDB Atlas 数据库
+###步骤1：创建MongoDB地图集数据库
 
-1. 访问 [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. 点击 "Start Free" 注册账户
-3. 选择 **Free Tier** (M0) 免费集群
-4. 选择区域：**Singapore** 或 **Sydney**（延迟较低）
-5. 点击 "Create Cluster" 等待创建完成
+1.访问[MongoDB地图集](https://www.mongodb.com/cloud/atlas)
+2.点击"开始免费"注册账户
+3.选择**自由层**(M0)免费集群
+4.选择区域：**新加坡**或**悉尼**（延迟较低）
+5.点击"创建群集“”等待创建完成
 
 6. 创建数据库：
    - 点击 "Database" → "Browse Collections"
