@@ -199,8 +199,7 @@
   <div id="game-screen" class="screen hidden">
     <header class="game-header">
       <div class="header-left">
-        <span class="game-logo">道途</span><span class="server-status">● 单机版</span>
-        <span class="demo-badge">演示版</span>
+        <span class="game-logo">道途</span><span class="server-status">● 云端版</span>
       </div>
       <div class="header-right"><span id="player-name"></span><button id="logout-btn" class="header-btn">退出</button></div>
     </header>
@@ -240,7 +239,7 @@
       </aside>
       <main class="game-main">
         <div class="world-header"><h2 id="world-title">修仙世界</h2></div>
-        <div class="game-log" id="game-log"><div class="log-entry system">欢迎来到道途修仙世界！</div><div class="log-entry system">这是单机演示版，数据保存在本地浏览器中。</div></div>
+        <div class="game-log" id="game-log"><div class="log-entry system">欢迎来到道途修仙世界！</div><div class="log-entry system">数据保存在云端服务器，多人联机畅玩！</div></div>
         <div class="action-panel">
           <div class="action-buttons">
             <button class="action-btn meditate" data-action="meditate"><span class="action-icon">🧘</span><span class="action-name">打坐修炼</span></button>
@@ -254,42 +253,15 @@
         <div class="online-section"><h3>在线玩家</h3><div class="online-list" id="online-list"><div class="online-user"><span class="online-dot"></span><span class="online-name">你</span><span class="online-realm" id="self-realm"></span></div></div></div>
         <div class="chat-section">
           <h3>系统消息</h3>
-          <div class="chat-messages" id="chat-messages"><div class="chat-message"><div class="chat-text">单机模式，无聊天功能</div></div></div>
+          <div class="chat-messages" id="chat-messages"><div class="chat-message"><div class="chat-text">云端模式，多人聊天</div></div></div>
         </div>
         <div class="leaderboard-section"><h3>境界榜</h3><div class="leaderboard" id="leaderboard"></div></div>
       </aside>
     </div>
   </div>
-  <script>
-    const SPIRIT_ROOTS = [{name:'天灵根',bonus:2.0},{name:'单灵根',bonus:1.5},{name:'双灵根',bonus:1.2},{name:'三灵根',bonus:1.0},{name:'五行灵根',bonus:0.7}];
-    const REALMS = [{level:1,name:'炼气期一层',maxQi:100,reqQi:0},{level:2,name:'炼气期二层',maxQi:200,reqQi:150},{level:3,name:'炼气期三层',maxQi:350,reqQi:300},{level:4,name:'炼气期四层',maxQi:550,reqQi:500},{level:5,name:'炼气期五层',maxQi:800,reqQi:750},{level:6,name:'炼气期六层',maxQi:1100,reqQi:1000},{level:7,name:'炼气期七层',maxQi:1500,reqQi:1350},{level:8,name:'炼气期八层',maxQi:2000,reqQi:1800},{level:9,name:'炼气期九层',maxQi:2600,reqQi:2300},{level:10,name:'炼气期十层',maxQi:3300,reqQi:3000},{level:11,name:'筑基期',maxQi:5000,reqQi:4500},{level:12,name:'金丹期',maxQi:10000,reqQi:8000},{level:13,name:'元婴期',maxQi:20000,reqQi:15000}];
-    const LOCATIONS = [{id:1,name:'青云宗',desc:'你所在的宗门，灵气充沛',danger:1},{id:2,name:'青云山脚',desc:'宗门外的山脚，有一些低阶妖兽',danger:2},{id:3,name:'青云森林',desc:'密林中常有修士历练',danger:3},{id:4,name:'落日峡谷',desc:'峡谷中弥漫着诡异的气息',danger:4},{id:5,name:'万魔渊',desc:'魔气纵横，是修士的禁地',danger:5}];
-    const ENEMIES = [{name:'野兔',hp:20,attack:3,defense:1,qi:10,gold:5},{name:'野狼',hp:40,attack:8,defense:3,qi:25,gold:15},{name:'毒蛇',hp:35,attack:12,defense:2,qi:30,gold:20},{name:'山贼',hp:60,attack:15,defense:5,qi:50,gold:35},{name:'妖狐',hp:80,attack:20,defense:8,qi:80,gold:50},{name:'骷髅',hp:100,attack:25,defense:10,qi:120,gold:80},{name:'僵尸',hp:150,attack:30,defense:15,qi:180,gold:120},{name:'魔狼',hp:200,attack:40,defense:20,qi:250,gold:180}];
-    const STORAGE_KEY = 'dao_path_save';
-    let gameState = {users:{},currentUser:null,characters:{},leaderboard:[]};
-    let currentCharacter = null;
-    const authScreen = document.getElementById('auth-screen'), charCreateScreen = document.getElementById('char-create-screen'), gameScreen = document.getElementById('game-screen');
-    const loginForm = document.getElementById('login-form'), registerForm = document.getElementById('register-form'), charCreateForm = document.getElementById('char-create-form');
-    const tabBtns = document.querySelectorAll('.tab-btn'), authMessage = document.getElementById('auth-message'), charCreateMessage = document.getElementById('char-create-message');
-    function loadState() { const saved = localStorage.getItem(STORAGE_KEY); if(saved) gameState = JSON.parse(saved); }
-    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState)); }
-    function showScreen(screen) { authScreen.classList.add('hidden'); charCreateScreen.classList.add('hidden'); gameScreen.classList.add('hidden'); screen.classList.remove('hidden'); }
-    loadState();
-    if(gameState.currentUser && gameState.characters[gameState.currentUser]) { currentCharacter = gameState.characters[gameState.currentUser]; showScreen(gameScreen); initGame(); }
-    tabBtns.forEach(btn=>btn.addEventListener('click',()=>{tabBtns.forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(btn.dataset.tab==='login'){loginForm.classList.remove('hidden');registerForm.classList.add('hidden');}else{loginForm.classList.add('hidden');registerForm.classList.remove('hidden');}hide(authMessage);}));
-    loginForm.addEventListener('submit',e=>{e.preventDefault();const u=document.getElementById('login-username').value.trim(),p=document.getElementById('login-password').value;if(!gameState.users[u]||gameState.users[u]!==p){showMsg(authMessage,'用户名或密码错误','error');return;}gameState.currentUser=u;currentCharacter=gameState.characters[u];saveState();if(currentCharacter){showScreen(gameScreen);initGame();}else{showScreen(charCreateScreen);}});
-    registerForm.addEventListener('submit',e=>{e.preventDefault();const u=document.getElementById('register-username').value.trim(),p=document.getElementById('register-password').value;if(u.length<3||u.length>20){showMsg(authMessage,'用户名长度需在3-20个字符之间','error');return;}if(p.length<6){showMsg(authMessage,'密码长度至少6个字符','error');return;}if(gameState.users[u]){showMsg(authMessage,'用户名已被注册','error');return;}gameState.users[u]=p;gameState.currentUser=u;saveState();showMsg(authMessage,'注册成功！请创建你的角色','success');setTimeout(()=>{showScreen(charCreateScreen);},1000);});
-    charCreateForm.addEventListener('submit',e=>{e.preventDefault();const name=document.getElementById('char-name').value.trim(),gender=document.querySelector('input[name="gender"]:checked').value,spiritRoot=document.querySelector('input[name="spiritRoot"]:checked').value;if(name.length<2||name.length>10){showMsg(charCreateMessage,'名字长度需在2-10个字符之间','error');return;}const rootInfo=SPIRIT_ROOTS.find(r=>r.name===spiritRoot);currentCharacter={name,gender,spiritRoot,realmLevel:1,realmName:'炼气期一层',currentQi:0,maxQi:100,hp:100,maxHp:100,attack:10,defense:5,gold:0,prestige:0,locationId:1};gameState.characters[gameState.currentUser]=currentCharacter;saveState();showScreen(gameScreen);initGame();});
-    function showMsg(el,text,type){el.textContent=text;el.className=`message ${type}`;}
-    function hide(el){el.className='message hidden';}
-    function initGame(){updateUI();addLog('欢迎回来，'+currentCharacter.name+'！','system');addLog('当前位于：'+getLocationName(currentCharacter.locationId),'system');updateLeaderboard();document.getElementById('self-realm').textContent=currentCharacter.realmName;}
-    function updateUI(){document.getElementById('player-name').textContent=currentCharacter.name;document.getElementById('char-display-name').textContent=currentCharacter.name;document.getElementById('char-realm').textContent=currentCharacter.realmName;document.getElementById('hp-bar').style.width=(currentCharacter.hp/currentCharacter.maxHp*100)+'%';document.getElementById('hp-text').textContent=currentCharacter.hp+'/'+currentCharacter.maxHp;document.getElementById('qi-bar').style.width=(currentCharacter.currentQi/currentCharacter.maxQi*100)+'%';document.getElementById('qi-text').textContent=currentCharacter.currentQi+'/'+currentCharacter.maxQi;document.getElementById('spirit-root').textContent=currentCharacter.spiritRoot;document.getElementById('realm-level').textContent=currentCharacter.realmName;document.getElementById('attack').textContent=currentCharacter.attack;document.getElementById('defense').textContent=currentCharacter.defense;document.getElementById('gold').textContent=currentCharacter.gold;document.getElementById('prestige').textContent=currentCharacter.prestige;const loc=LOCATIONS.find(l=>l.id===currentCharacter.locationId);if(loc){document.getElementById('location-name').textContent=loc.name;document.getElementById('location-desc').textContent=loc.desc;}}
-    function getLocationName(id){return LOCATIONS.find(l=>l.id===id)?.name||'未知';}
-    function addLog(msg,type){const div=document.createElement('div');div.className=`log-entry ${type}`;div.textContent=msg;document.getElementById('game-log').appendChild(div);document.getElementById('game-log').scrollTop=document.getElementById('game-log').scrollHeight;}
-    function updateLeaderboard(){const lb=Object.values(gameState.characters).sort((a,b)=>b.realmLevel-a.realmLevel||b.currentQi-a.currentQi).slice(0,10);const el=document.getElementById('leaderboard');el.innerHTML='';lb.forEach((c,i)=>{const div=document.createElement('div');div.className='leader-entry';div.innerHTML=`<span class="leader-rank">${i+1}</span><span class="leader-name">${c.name}</span><span class="leader-realm">${c.realmName}</span>`;el.appendChild(div);});}
-    document.querySelectorAll('.action-btn').forEach(btn=>{btn.addEventListener('click',()=>{const action=btn.dataset.action;if(action==='refresh'){updateUI();addLog('刷新了角色状态','system');return;}if(action==='heal'){if(currentCharacter.gold<10){addLog('金币不足，需要10枚金币','system');return;}currentCharacter.gold-=10;currentCharacter.hp=currentCharacter.maxHp;saveState();updateUI();addLog('花费10枚金币，生命值已回满','heal');return;}if(action==='meditate'){const rootInfo=SPIRIT_ROOTS.find(r=>r.name===currentCharacter.spiritRoot);const qiGain=Math.floor((5+currentCharacter.realmLevel*2)*rootInfo.bonus);const realmInfo=REALMS.find(r=>r.level===currentCharacter.realmLevel);currentCharacter.currentQi=Math.min(currentCharacter.currentQi+qiGain,realmInfo.maxQi);let leveledUp=false;if(currentCharacter.currentQi>=realmInfo.reqQi&&currentCharacter.realmLevel<13){currentCharacter.realmLevel++;const next=REALMS.find(r=>r.level===currentCharacter.realmLevel);if(next){currentCharacter.realmName=next.name;currentCharacter.maxQi=next.maxQi;currentCharacter.attack+=2;currentCharacter.defense+=1;}leveledUp=true;}saveState();updateUI();addLog(`打坐修炼中获得${qiGain}点灵气！${leveledUp?'境界突破到'+currentCharacter.realmName+'！':''}`,leveledUp?'levelup':'system');return;}if(action==='explore'){const loc=LOCATIONS.find(l=>l.id===currentCharacter.locationId);const r=Math.random();if(r<0.4){const ei=Math.min(Math.floor(Math.random()*loc.danger*2),ENEMIES.length-1);const enemy=Object.assign({},ENEMIES[ei]);const charDmg=Math.max(1,currentCharacter.attack-enemy.defense+Math.floor(Math.random()*5));const enemyDmg=Math.max(1,enemy.attack-currentCharacter.defense+Math.floor(Math.random()*3));if(currentCharacter.hp>enemyDmg){const qiR=Math.floor(enemy.qi*(1+currentCharacter.realmLevel*0.1));const goldR=Math.floor(enemy.gold*(1+currentCharacter.realmLevel*0.1));currentCharacter.currentQi+=qiR;currentCharacter.gold+=goldR;saveState();updateUI();addLog(`遇到${enemy.name}，经过激战你获胜了！获得${qiR}点灵气和${goldR}枚金币`,'combat');}else{const hpLoss=Math.floor(enemyDmg*0.3);currentCharacter.hp=Math.max(1,currentCharacter.hp-hpLoss);saveState();updateUI();addLog(`遇到${enemy.name}，你被打败了！损失${hpLoss}点生命值`,'combat');}}else if(r<0.7){const goldF=Math.floor(Math.random()*20*currentCharacter.realmLevel);currentCharacter.gold+=goldF;saveState();updateUI();addLog(`在探索中发现了一个宝箱，里面有${goldF}枚金币！`,'treasure');}else{addLog('你四处探索，但什么都没有发现...','system');}}});});
-    document.querySelectorAll('.travel-btn').forEach(btn=>{btn.addEventListener('click',()=>{const id=parseInt(btn.dataset.location);const loc=LOCATIONS.find(l=>l.id===id);if(loc){currentCharacter.locationId=id;saveState();updateUI();addLog('你来到了'+loc.name,'system');}});});
-    document.getElementById('logout-btn').addEventListener('click',()=>{gameState.currentUser=null;currentCharacter=null;saveState();showScreen(authScreen);});
-  </script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/game.js"></script>
 </body>
 </html>
